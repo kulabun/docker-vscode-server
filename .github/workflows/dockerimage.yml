@@ -1,0 +1,21 @@
+name: Docker Image CI
+
+on:
+  schedule:
+    - cron: "0 0 1/7 * *"
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: |
+        DOCKER_IMAGE_TAG="kulabun/vscodeserver:latest"
+        docker build . --tag $DOCKER_IMAGE_TAG
+        docker login -u kulabun -p ${{ secrets.DOCKER_PASSWORD }}
+        docker push $DOCKER_IMAGE_TAG
